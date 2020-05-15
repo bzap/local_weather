@@ -5,7 +5,7 @@ import os
 import requests 
 import json 
 
-
+# need to update to hide api key 
 api_key = "d8d00d3f3137d7856f61036623a4b487"
 
 ow = openweather.OpenWeather(cache=False)
@@ -20,7 +20,6 @@ def make_url(city):
     url_key = 'http://api.openweathermap.org/data/2.5/weather?appid=' + api_key + "&q=" + city
     data = requests.get(url_key)
     json_data = data.json()
-    print(json_data['weather'])
     return json_data
 
 
