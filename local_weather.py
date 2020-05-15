@@ -9,18 +9,21 @@ client = discord.Client()
 
 @client.event
 async def on_ready():
-    print(f'{client.user} has connected to Discord!')
+    print(f'{client.user} yolo')
 
 @client.event
 async def on_message(message):
     try: 
         if message.author == client.user:
             return
-
-        if message.content == ('!weather'):
+            
+        elif message.content == ('!weather'):
             await message.channel.send(" > Invalid, use it in the format !weather <city>")
+
+        elif (message.content == ('!weather here')) or (message.content == ('!weather Here')) :
+            await message.channel.send(" > ur local weather sucks")
         
-        if len(message.content.split()) > 1: 
+        elif len(message.content.split()) > 1: 
             split = message.content.split()
             location = "" 
             for i in split[1::]:
@@ -52,7 +55,20 @@ async def on_message(message):
                     "Max: **" + str(temp_max) + "°C" + "**" + "\n" + \
                     "Wind speed: **" + wind_speed + "**" + "\n"
             await message.channel.send(output)
+
+
+
+
+
+
     except KeyError: 
         await message.channel.send("> City not found, try again")
+
+
+
+
+# add local functionality 
+# add the day 
+
 
 client.run(TOKEN)
