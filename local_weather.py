@@ -1,6 +1,8 @@
+# @Linas Aleknevicius May 13/2020
+
 import os 
 import discord
-from weather_data import *
+from weather_data import choose_emoji, get_data, country_flag, convert_cel
 
 TOKEN = 'NzEwNjQ4OTEzNjI2OTIzMTUz.Xr3hjw.YxSHQOQxn4pRGGjvPrn3e8K9Z1E'
 client = discord.Client()
@@ -20,8 +22,13 @@ async def on_message(message):
         
         if len(message.content.split()) > 1: 
             split = message.content.split()
-            # need to fix the split so it takes the rest of the name eg for cities like richmond hill  
-            data = (make_url(split[1]))
+            location = "" 
+            for i in split[1::]:
+                if (split[-1] == i):
+                    location += i
+                else:
+                    location += i + " "
+            data = (get_data(location))
             current_weather = round(convert_cel(data['main']['temp']), 2)
             feels_like = round(convert_cel(data['main']['feels_like']), 2)
             country_origin = data['sys']['country']
@@ -29,17 +36,16 @@ async def on_message(message):
             humidity = data['main']['humidity']
             temp_min = round(convert_cel(data['main']['temp_min']), 2)
             temp_max = round(convert_cel(data['main']['temp_max']), 2)
-
-            
             if (country_origin == "US"):
                 wind_speed = str(data['wind']['speed']) + " m/h"
             else: 
                 wind_speed = str(round(data['wind']['speed'] * 1.609344, 2)) + " km/h"
-            print(country_origin)
+            current_emoji = choose_emoji(data['weather'][0]['icon'])
+            flag = country_flag(data['sys']['country'])
 
-            output = ">>> ***Current weather in " + split[1] + ", " + country_origin + "***" + "\n" + \
-                    "Current weather is: **" + conditions + "\n" + "**" \
-                    "Temperature: **" + str(current_weather) + "°C :sunny: " + "**" + "\n" + \
+            output = ">>> ***Current weather in:  " + flag + "  " + location.title() + ", " + country_origin + "  " + flag + "***" + "\n" + \
+                    "Current weather is: **" + conditions + " " + current_emoji + "\n" + "**" \
+                    "Temperature: **" + str(current_weather) + "°C " + "**" + "\n" + \
                     "Feels like: **" + str(feels_like) + "°C" + "**" + "\n" + \
                     "Humiditity: **" + str(humidity) + "%" + "**" + "\n" + \
                     "Min: **" + str(temp_min) + "°C" + "**" + "\n" + \
@@ -48,11 +54,5 @@ async def on_message(message):
             await message.channel.send(output)
     except KeyError: 
         await message.channel.send("> City not found, try again")
-        
-
-
-
-# make an extension to get local weather 
-# but also to put in a city 
 
 client.run(TOKEN)
